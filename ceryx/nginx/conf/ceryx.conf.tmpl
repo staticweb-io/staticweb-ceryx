@@ -16,13 +16,6 @@ server {
 
     ssl_certificate {{ default .Env.CERYX_SSL_DEFAULT_CERTIFICATE "/etc/ceryx/ssl/default.crt" }};
     ssl_certificate_key {{ default .Env.CERYX_SSL_DEFAULT_KEY "/etc/ceryx/ssl/default.key" }};
-    ssl_certificate_by_lua_file lualib/certificate.lua;
-
-    location /.well-known/acme-challenge {
-        content_by_lua_block {
-            auto_ssl:challenge_server()
-        }
-    }
 
     location / {
         set $target "fallback";
@@ -57,19 +50,3 @@ server {
         root /etc/ceryx/static;
     }
 }
-
-{{ if ne (lower (default .Env.CERYX_DISABLE_LETS_ENCRYPT "")) "true" }}
-# Launch the Let's Encrypt certificate internal server running on port 8999, if
-# `CERYX_DISABLE_LETS_ENCRYPT` is *not* set to `true`.
-
-server {
-    listen 127.0.0.1:8999;
-    client_body_buffer_size 1m;
-    client_max_body_size 1m;
-    location / {
-        content_by_lua_block {
-            auto_ssl:hook_server()
-        }
-    }
-}
-{{ end }}

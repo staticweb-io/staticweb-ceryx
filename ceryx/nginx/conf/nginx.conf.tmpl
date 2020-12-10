@@ -30,25 +30,14 @@ http {
 
     # Lua settings
     lua_package_path "${prefix}lualib/?.lua;;";
+    lua_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+    lua_ssl_verify_depth 2;
 
     lua_shared_dict ceryx 1m;
-    lua_shared_dict auto_ssl 1m;
-    lua_shared_dict auto_ssl_settings 64k;
     {{ if eq (lower (default .Env.CERYX_DEBUG "")) "true" }}
     lua_code_cache off;
     {{ else }}
     lua_code_cache on;
-    {{ end }}
-
-    {{ if ne (lower (default .Env.CERYX_DISABLE_LETS_ENCRYPT "")) "true" }}
-    # Enable automatic Let's Encryps certificate generation, if
-    # `CERYX_DISABLE_LETS_ENCRYPT` is *not* set to `true`.
-    # Check out https://github.com/openresty/lua-resty-core
-    init_by_lua_file "lualib/letsencrypt.lua";
-
-    init_worker_by_lua_block {
-        auto_ssl:init_worker()
-    }
     {{ end }}
 
     # Includes
