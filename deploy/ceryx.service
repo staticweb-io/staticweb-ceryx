@@ -1,0 +1,13 @@
+[Unit]
+Description=Cerxy Dynamic Reverse Proxy
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+WorkingDirectory=/home/admin/staticweb-ceryx
+ExecStart=/usr/local/bin/docker-compose up
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
