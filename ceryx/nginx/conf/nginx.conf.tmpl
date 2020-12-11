@@ -22,7 +22,7 @@ http {
     client_max_body_size  {{ default .Env.CERYX_MAX_REQUEST_BODY_SIZE "100m" }};
 
     # Use the Docker internal DNS, pick your favorite if running outside of Docker
-    resolver {{ default .Env.CERYX_DNS_RESOLVER "127.0.0.11" }};
+    resolver {{ default .Env.CERYX_DNS_RESOLVER "127.0.0.11" }} ipv6=off;
 
     # Logging
     access_log /dev/stdout;
