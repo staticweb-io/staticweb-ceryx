@@ -77,9 +77,9 @@ function getRouteForSource(source)
         if targetIsInValid(route.target) then
             return nil
         end
-        local success, err, _ = cache:set(source, route.target, 5)
+        local success, err, _ = cache:set(source, route.target, 60)
         if success then
-           ngx.log(ngx.DEBUG, "Caching from " .. source .. " to " .. route.target .. " for 5 seconds.")
+           ngx.log(ngx.DEBUG, "Caching from " .. source .. " to " .. route.target .. " for 60 seconds.")
         else
            ngx.log(ngx.DEBUG, "Error caching " .. source .. "... : " .. err)
         end
