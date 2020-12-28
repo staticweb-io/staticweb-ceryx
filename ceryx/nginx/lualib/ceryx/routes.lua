@@ -67,9 +67,9 @@ function getRouteForSource(source)
 
     local chunks = { source:match(ip_pattern) }
     if #chunks == 4 then
-       ngx.log(ngx.INFO, "Returning 204 for IP address: " .. source)
+       ngx.log(ngx.INFO, "Returning 200 for IP address: " .. source)
        route.target = ""
-       route.mode = "204"
+       route.mode = "200"
     else
        ngx.log(ngx.DEBUG, "Looking for a route for " .. source)
        -- Check if key exists in local cache
