@@ -2,7 +2,6 @@ local routes = require "ceryx.routes"
 local utils = require "ceryx.utils"
 
 local host = ngx.var.host
-local cache = ngx.shared.ceryx
 
 local is_not_https = (ngx.var.scheme ~= "https")
 
@@ -43,5 +42,4 @@ if route == nil then
     return ngx.exit(ngx.HTTP_SERVICE_UNAVAILABLE)
 end
 
--- Save found key to local cache for 5 seconds
 routeRequest(host, route.target, route.mode)
