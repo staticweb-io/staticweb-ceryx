@@ -29,8 +29,8 @@ function routeRequest(source, target, mode)
 
     if mode == "redirect" then
        return redirect(source, target)
-    elseif mode == "404" then
-       return ngx.exit(404)
+    elseif mode == "204" then
+       return ngx.exit(204)
     end
 
     return proxy(source, target)
