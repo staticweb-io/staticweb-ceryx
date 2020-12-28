@@ -65,23 +65,34 @@ function getRouteForSource(source)
 
     ngx.log(ngx.DEBUG, "Looking for a route for " .. source)
     -- Check if key exists in local cache
-    local cached_value, _ = cache:get(source)
+    local cached_value, _, stale = cache:get_stale(source)
 
-    if cached_value then
+    if cached_value and not stale then
         ngx.log(ngx.DEBUG, "Cache hit for " .. source .. ".")
         route.target = cached_value
     else
         ngx.log(ngx.DEBUG, "Cache miss for " .. source .. ".")
-        route.target = getTargetForSource(source)
+        local target, err = getTargetForSource(source)
 
-        if targetIsInValid(route.target) then
-            return nil
-        end
-        local success, err, _ = cache:set(source, route.target, 60)
-        if success then
-           ngx.log(ngx.DEBUG, "Caching from " .. source .. " to " .. route.target .. " for 60 seconds.")
+        if err and cached_value then
+           route.target = cached_value
+           ngx.log(ngx.DEBUG, "Error getting target: " .. err .. ". Using stale cache value from " .. source .. " to " .. cached_value .. " and caching for 60 seconds.")
+           local success, err, _ = cache:set(source, cached_value, 60)
+           if err then
+              ngx.log(ngx.DEBUG, "Error caching " .. source .. "... : " .. err)
+           end
         else
-           ngx.log(ngx.DEBUG, "Error caching " .. source .. "... : " .. err)
+           if targetIsInValid(target) then
+              return nil
+           end
+
+           route.target = target
+           local success, err, _ = cache:set(source, target, 60)
+           if success then
+              ngx.log(ngx.DEBUG, "Caching from " .. source .. " to " .. target .. " for 60 seconds.")
+           else
+              ngx.log(ngx.DEBUG, "Error caching " .. source .. "... : " .. err)
+           end
         end
     end
 
