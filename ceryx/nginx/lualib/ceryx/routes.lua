@@ -99,11 +99,20 @@ function getRouteForSource(source)
 
              route.target = target
              route.mode = "proxy"
-             local success, err, _ = cache:set(source, target, 60)
-             if success then
-                ngx.log(ngx.DEBUG, "Caching from " .. source .. " to " .. target .. " for 60 seconds.")
+             if target == "https://app.staticweb.io" then
+                local success, err, _ = cache:set(source, target, 2)
+                if success then
+                   ngx.log(ngx.DEBUG, "Caching from " .. source .. " to " .. target .. " for 2 seconds.")
+                else
+                   ngx.log(ngx.DEBUG, "Error caching " .. source .. "... : " .. err)
+                end
              else
-                ngx.log(ngx.DEBUG, "Error caching " .. source .. "... : " .. err)
+                local success, err, _ = cache:set(source, target, 60)
+                if success then
+                   ngx.log(ngx.DEBUG, "Caching from " .. source .. " to " .. target .. " for 60 seconds.")
+                else
+                   ngx.log(ngx.DEBUG, "Error caching " .. source .. "... : " .. err)
+                end
              end
           end
        end
