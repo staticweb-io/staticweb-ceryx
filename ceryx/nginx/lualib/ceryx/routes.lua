@@ -2,7 +2,7 @@ local cjson = require "cjson"
 local http = require "resty.http"
 local utils = require "ceryx.utils"
 
-local host = utils.getenv("CERYX_STATICWEB_API_HOST", "https://app.staticweb.io")
+local targetUrl = utils.getenv("CERYX_TARGET_URL", "https://j24fwlmsvl.execute-api.us-west-2.amazonaws.com/internal/v1/ceryx-target")
 local prefix = utils.getenv("CERYX_KEY_PREFIX", "ceryx")
 
 local ip_pattern = "^(%d+)%.(%d+)%.(%d+)%.(%d+)$"
@@ -37,7 +37,7 @@ function targetIsInValid(target)
 end
 
 function getTargetForSource(source)
-    local res, err = jsonPost(host .. "/api/ceryx", {source = source})
+    local res, err = jsonPost(targetUrl, {source = source})
     if not res then
        return nil, err
     end
