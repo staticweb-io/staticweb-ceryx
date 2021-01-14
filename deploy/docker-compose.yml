@@ -9,6 +9,7 @@ services:
     image: localhost:5000/ceryx:latest
     ports:
       - ${CERYX_EXTERNAL_PORT:-80}:80
+      - ${STUB_STATUS_EXTERNAL_PORT:-4444}:4444
     environment:
       <<: *common-settings
       CERYX_DOCKERIZE_EXTRA_ARGS: -no-overwrite

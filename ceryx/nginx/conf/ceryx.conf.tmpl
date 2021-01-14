@@ -57,3 +57,11 @@ server {
         proxy_pass https://app.staticweb.io;
     }
 }
+
+server {
+    listen 4444;
+    location /stub_status {
+        stub_status;
+    }
+}
+
