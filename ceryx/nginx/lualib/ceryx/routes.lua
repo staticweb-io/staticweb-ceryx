@@ -2,7 +2,7 @@ local cjson = require "cjson"
 local http = require "resty.http"
 local utils = require "ceryx.utils"
 
-local targetUrl = utils.getenv("CERYX_TARGET_URL", "https://j24fwlmsvl.execute-api.us-west-2.amazonaws.com/internal/v1/ceryx-target")
+local targetUrl = utils.getenv("CERYX_TARGET_URL", "https://api.staticweb.io/internal/v1/ceryx-target")
 local prefix = utils.getenv("CERYX_KEY_PREFIX", "ceryx")
 
 local ip_pattern = "^(%d+)%.(%d+)%.(%d+)%.(%d+)$"
