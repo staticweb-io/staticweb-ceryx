@@ -26,7 +26,7 @@ http {
 
     # Logging
     access_log /dev/stdout;
-    error_log /dev/stderr {{ default .Env.CERYX_LOG_LEVEL "info" }};
+    error_log /dev/stderr info;
 
     # Lua settings
     lua_package_path "${prefix}lualib/?.lua;;";
