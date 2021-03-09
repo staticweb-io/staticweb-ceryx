@@ -1,5 +1,5 @@
 #!/bin/sh
-docker run -p 5000:5000 --restart always \
+docker run -p 5000:5000 \
 -e "REGISTRY_STORAGE=s3" \
 -e "REGISTRY_STORAGE_S3_REGION=us-west-2" \
 -e "REGISTRY_STORAGE_S3_BUCKET=staticweb-global-infra-repositorybucket-1quksgr5tcs6n" \
