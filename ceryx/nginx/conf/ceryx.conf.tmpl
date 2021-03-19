@@ -24,9 +24,10 @@ server {
         access_by_lua_file lualib/router.lua;
 
         # Proxy configuration
-        proxy_set_header Host $http_host;
+        proxy_set_header Host app.staticweb.io;
+        proxy_set_header StaticWeb-Forwarded-Host $http_host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Real-IP  $remote_addr;
+        proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-Proto $proxy_set_x_forwarded_proto;
         proxy_connect_timeout 5s;
 
@@ -55,6 +56,11 @@ server {
     location = /504 {
         proxy_connect_timeout 5s;
         proxy_pass https://app.staticweb.io;
+        proxy_set_header Host app.staticweb.io;
+        proxy_set_header StaticWeb-Forwarded-Host $http_host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto $proxy_set_x_forwarded_proto;
     }
 }
 
