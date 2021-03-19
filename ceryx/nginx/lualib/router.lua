@@ -2,6 +2,7 @@ local routes = require "ceryx.routes"
 local utils = require "ceryx.utils"
 
 local host = ngx.var.host
+local request_uri = ngx.var.request_uri
 
 local is_not_https = (ngx.var.scheme ~= "https")
 
@@ -31,13 +32,17 @@ function routeRequest(source, target, mode)
        return redirect(source, target)
     elseif mode == "200" then
        return ngx.exit(200)
+    elseif mode == "404" then
+       return ngx.exit(404)
+    elseif mode == "503" then
+       return ngx.exit(503)
     end
 
     return proxy(source, target)
 end
 
 ngx.log(ngx.INFO, "HOST " .. host)
-local route = routes.getRouteForSource(host)
+local route = routes.getRouteForSource(host, request_uri)
 
 if route == nil then
     ngx.log(ngx.INFO, "No $wildcard target configured for fallback. Exiting with Bad Gateway.")

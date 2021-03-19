@@ -23,7 +23,7 @@ function jsonPost(uri, body)
    }
    local res, err = httpClient:request_uri(uri, request)
 
-   if not res then
+   if err or not res then
       ngx.log(ngx.DEBUG, err)
       return nil, err
    end
@@ -60,16 +60,60 @@ function getTargetForSource(source)
     return res.body.target, nil
 end
 
-function getRouteForSource(source)
+function isHealthy()
+   ngx.log(ngx.INFO, "Performing health check")
+   local uri = "https://api.staticweb.io/health"
+   local httpClient = http.new()
+   httpClient:set_timeout(5000)
+   local request = {
+      method = "GET"
+   }
+   local res, err = httpClient:request_uri(uri, request)
+
+   if err or not res then
+      ngx.log(ngx.ERR, "Health check failed")
+      ngx.log(ngx.DEBUG, err)
+      return false, err
+   end
+
+   if 200 == res.status or 204 == res.status then
+      ngx.log(ngx.INFO, "Health check succeeded with status " .. res.status)
+      return true, nil
+   else
+      ngx.log(ngx.ERR, "Health check failed with status " .. res.status)
+      return false, nil
+   end
+end
+
+function getRouteForSource(source, request_uri)
     local _
     local route = {}
     local cache = ngx.shared.ceryx
 
     local chunks = { source:match(ip_pattern) }
     if #chunks == 4 then
-       ngx.log(ngx.INFO, "Returning 200 for IP address: " .. source)
-       route.target = ""
-       route.mode = "200"
+       local first = chunks[1]
+       if "/health" == request_uri and ("10" == first or "127" == first) then
+          -- Handle ELB health checks
+          local healthy = cache:get("staticweb_healthy")
+          if nil == healthy then
+             healthy, _ = isHealthy()
+             cache:set("staticweb_healthy", healthy, 25)
+          end
+
+          if healthy then
+             route.target = ""
+             route.mode = "200"
+          else
+             route.target = ""
+             route.mode = "503"
+          end
+       else
+          -- Don't waste resources on bots
+          ngx.log(ngx.INFO, "Returning 404 for IP address: " .. source)
+          route.target = ""
+          route.mode = "404"
+       end
     else
        ngx.log(ngx.DEBUG, "Looking for a route for " .. source)
        -- Check if key exists in local cache
