@@ -18,12 +18,13 @@ function redirect(source, target)
     return ngx.redirect(target, ngx.HTTP_MOVED_PERMANENTLY)
 end
 
-function proxy(source, target)
+function proxy(source, target, host_header)
     ngx.var.target = target
+    ngx.var.host_header = host_header
     ngx.log(ngx.INFO, "Proxying request for " .. source .. " to " .. target .. ".")
 end
 
-function routeRequest(source, target, mode)
+function routeRequest(source, target, host_header, mode)
     ngx.log(ngx.DEBUG, "Received " .. mode .. " routing request from " .. source .. " to " .. target)
 
     target = formatTarget(target)
@@ -38,7 +39,7 @@ function routeRequest(source, target, mode)
        return ngx.exit(503)
     end
 
-    return proxy(source, target)
+    return proxy(source, target, host_header)
 end
 
 ngx.log(ngx.INFO, "HOST " .. host)
@@ -49,4 +50,4 @@ if route == nil then
     return ngx.exit(ngx.HTTP_SERVICE_UNAVAILABLE)
 end
 
-routeRequest(host, route.target, route.mode)
+routeRequest(host, route.target, route.host_header, route.mode)

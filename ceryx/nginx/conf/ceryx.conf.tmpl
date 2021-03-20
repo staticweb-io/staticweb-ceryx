@@ -19,12 +19,13 @@ server {
 
     location / {
         set $target "fallback";
+        set $host_header "fallback";
 
         # Lua files
         access_by_lua_file lualib/router.lua;
 
         # Proxy configuration
-        proxy_set_header Host app.staticweb.io;
+        proxy_set_header Host $host_header;
         proxy_set_header StaticWeb-Forwarded-Host $http_host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Real-IP $remote_addr;

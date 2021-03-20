@@ -162,6 +162,12 @@ function getRouteForSource(source, request_uri)
        end
     end
 
+    if route.target == "https://app.staticweb.io" then
+       route.host_header = "app.staticweb.io"
+    else
+       route.host_header = source
+    end
+
     return route
 end
 
