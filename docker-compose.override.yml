@@ -1,5 +1,3 @@
-version: '3.7'
-
 x-common-dev-settings:
   &common-dev-settings
   CERYX_DEBUG: ${CERYX_DEBUG:-true}

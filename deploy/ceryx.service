@@ -5,7 +5,7 @@ StartLimitIntervalSec=0
 
 [Service]
 WorkingDirectory=/home/admin/staticweb-ceryx
-ExecStart=/usr/local/bin/docker-compose up
+ExecStart=/usr/local/bin/docker compose up
 Restart=always
 RestartSec=1
 
